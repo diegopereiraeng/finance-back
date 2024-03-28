@@ -1,0 +1,5 @@
+name: <+service.name>
+image: <+artifacts.primary.image>
+vars:
+  - varName: NODE_OPTIONS
+    varValue: "--tls-min-v1.2 --tls-max-v1.2"
