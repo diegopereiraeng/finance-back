@@ -26,8 +26,9 @@ app.get('/api/transactions', (req, res) => {
 // Add a new transaction
 app.post('/api/transactions', (req, res) => {
     const transaction = req.body;
+    // Optionally, add validation or manipulation here
     transactions.push(transaction);
-    res.status(201).send('Transaction added');
+    res.status(201).json(transactions); // Return the updated list of transactions
 });
 
 // Start the server
