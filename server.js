@@ -19,12 +19,12 @@ let transactions = [];
 
 // API Endpoints
 // Fetch all transactions
-app.get('/transactions', (req, res) => {
+app.get('/api/transactions', (req, res) => {
     res.json(transactions);
 });
 
 // Add a new transaction
-app.post('/transactions', (req, res) => {
+app.post('/api/transactions', (req, res) => {
     const transaction = req.body;
     transactions.push(transaction);
     res.status(201).send('Transaction added');
