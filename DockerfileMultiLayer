@@ -15,7 +15,7 @@ RUN pip install numpy scipy
 
 # Quarto estágio: ambiente final
 FROM ubuntu:20.04
-COPY --from=builder /hello /usr/local/bin/
+COPY --from=builder /hello /usr/local/bin/hello
 COPY --from=python-env /root/.local /root/.local
 ENV PATH=/root/.local/bin:$PATH
 
@@ -35,18 +35,9 @@ RUN apt-get update && \
 # Instala bibliotecas adicionais de Python
 RUN pip3 install numpy pandas
 
-# Baixa um exemplo de código-fonte e compila
-# RUN wget https://ftp.gnu.org/gnu/coreutils/coreutils-8.32.tar.xz && \
-#    tar -xf coreutils-8.32.tar.xz && \
-#    cd coreutils-8.32 && \
-#    ./configure && \
-#    make
-
-# Limpa arquivos desnecessários para reduzir o tamanho da imagem
-RUN rm -rf /var/lib/apt/lists/* /coreutils-8.32 /coreutils-8.32.tar.xz
 
 WORKDIR /app
 COPY . /app
 
 # Comando padrão ao iniciar o contêiner
-CMD ["bash"]
+CMD ["hello"]
