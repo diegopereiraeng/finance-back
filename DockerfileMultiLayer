@@ -17,9 +17,6 @@ ENV PATH=/root/.local/bin:$PATH
 # Evita prompts interativos durante a construção da imagem
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Instala bibliotecas adicionais de Python
-RUN pip3 install numpy pandas
-
 
 WORKDIR /app
 COPY . /app
