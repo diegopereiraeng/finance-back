@@ -16,7 +16,7 @@ RUN pip install numpy scipy
 # Quarto estágio: ambiente final
 FROM ubuntu:20.04
 COPY --from=builder /hello /usr/local/bin/hello
-COPY --from=python-env /root/.local /root/.local
+COPY --from=python-env /root/.local /root/.local2
 ENV PATH=/root/.local/bin:$PATH
 
 # Evita prompts interativos durante a construção da imagem
