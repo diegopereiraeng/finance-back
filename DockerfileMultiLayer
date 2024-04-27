@@ -15,7 +15,7 @@ RUN pip install numpy scipy
 
 # Quarto estágio: ambiente final
 FROM ubuntu:20.04
-COPY --from=builder /openssl-1.1.1k/apps/openssl /usr/local/bin/
+COPY --from=builder /hello /usr/local/bin/
 COPY --from=python-env /root/.local /root/.local
 ENV PATH=/root/.local/bin:$PATH
 
