@@ -6,12 +6,8 @@ RUN apt-get update && \
 
 # Segundo estágio: download e compilação de um projeto grande
 FROM base as builder
-RUN curl -O https://www.openssl.org/source/openssl-1.1.1k.tar.gz && \
-    tar -xzf openssl-1.1.1k.tar.gz && \
-    cd openssl-1.1.1k && \
-    ./config && \
-    make && \
-    make test
+RUN echo '#include <stdio.h>\nint main() { printf("Hello, World!\\n"); return 0; }' > hello.c && \
+    gcc hello.c -o hello
 
 # Terceiro estágio: preparação de um ambiente Python
 FROM python:3.9-slim as python-env
