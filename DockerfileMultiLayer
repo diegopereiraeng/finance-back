@@ -1,0 +1,56 @@
+# Primeiro estágio: base
+FROM ubuntu:20.04 as base
+RUN apt-get update && \
+    apt-get install -y build-essential curl && \
+    apt-get clean
+
+# Segundo estágio: download e compilação de um projeto grande
+FROM base as builder
+RUN curl -O https://www.openssl.org/source/openssl-1.1.1k.tar.gz && \
+    tar -xzf openssl-1.1.1k.tar.gz && \
+    cd openssl-1.1.1k && \
+    ./config && \
+    make && \
+    make test
+
+# Terceiro estágio: preparação de um ambiente Python
+FROM python:3.9-slim as python-env
+RUN pip install numpy scipy
+
+# Quarto estágio: ambiente final
+FROM ubuntu:20.04
+COPY --from=builder /openssl-1.1.1k/apps/openssl /usr/local/bin/
+COPY --from=python-env /root/.local /root/.local
+ENV PATH=/root/.local/bin:$PATH
+
+# Evita prompts interativos durante a construção da imagem
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Atualiza a lista de pacotes e instala algumas ferramentas de desenvolvimento
+RUN apt-get update && \
+    apt-get install -y build-essential wget && \
+    apt-get clean
+
+# Instala o Python e o pip
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip && \
+    apt-get clean
+
+# Instala bibliotecas adicionais de Python
+RUN pip3 install numpy pandas
+
+# Baixa um exemplo de código-fonte e compila
+RUN wget https://ftp.gnu.org/gnu/coreutils/coreutils-8.32.tar.xz && \
+    tar -xf coreutils-8.32.tar.xz && \
+    cd coreutils-8.32 && \
+    ./configure && \
+    make
+
+# Limpa arquivos desnecessários para reduzir o tamanho da imagem
+RUN rm -rf /var/lib/apt/lists/* /coreutils-8.32 /coreutils-8.32.tar.xz
+
+WORKDIR /app
+COPY . /app
+
+# Comando padrão ao iniciar o contêiner
+CMD ["bash"]
