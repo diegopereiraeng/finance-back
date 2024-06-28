@@ -31,5 +31,21 @@ app.post('/api/transactions', (req, res) => {
     res.status(201).json(transactions); // Return the updated list of transactions
 });
 
+// Add a new transaction
+app.post('/api/transaction', (req, res) => {
+    const transaction = req.body;
+    // Optionally, add validation or manipulation here
+    transactions.push(transaction);
+    res.status(201).json(transactions); // Return the updated list of transactions
+});
+
+// Add a new transaction
+app.post('/api/payment', (req, res) => {
+    const transaction = req.body;
+    // Optionally, add validation or manipulation here
+    transactions.push(transaction);
+    res.status(201).json(transactions); // Return the updated list of transactions
+});
+
 // Start the server
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
