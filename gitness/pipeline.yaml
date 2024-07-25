@@ -1,0 +1,50 @@
+kind: pipeline
+spec:
+  stages:
+    - name: build
+      spec:
+        platform:
+          arch: amd64
+          os: linux
+        steps:
+          - name: npm_install
+            spec:
+              container:
+                image: node
+              script:
+                - npm install
+            type: run
+          - name: docker_build
+            spec:
+              inputs:
+                dry_run: true
+                repo: harnesspov/gitness-finance-backend
+                tags: latest
+              name: docker
+            type: plugin
+          - name: docker_build_push
+            spec:
+              inputs:
+                tags: latest
+                password: ${{ secrets.get("dockerhub") }}
+                repo: harnesspov/gitness-finance-backend
+                username: harnesspov
+              name: docker
+            type: plugin
+          - name: deploy-k8s
+            type: run
+            spec:
+              container: alpine/k8s:1.28.12
+              script: |-
+                kubectl config set-cluster gitness-k8s-cluster --server=${{secrets.get("k8s-server")}} --insecure-skip-tls-verify=true
+                kubectl config set-credentials gitness-user --token=${{secrets.get('gitness-sa-token')}}
+                kubectl config set-context gitness-k8s-context --cluster=gitness-k8s-cluster --user=gitness-user
+                kubectl config use-context gitness-k8s-context
+                kubectl apply -f gitness/finance-backend.yaml -n gitness
+                kubectl wait --for=condition=Ready pods -l app=finance-backend -n gitness --timeout=300s
+                kubectl get pods -n gitness
+                pod_name=$(kubectl get pods -n gitness -l app=finance-backend -o jsonpath='{.items[0].metadata.name}')
+                kubectl exec $pod_name -n gitness -- curl -X POST http://localhost:8080/api/transactions -H "Content-Type: application/json" -d '{ "amount": 100.00, "description": "Compra de equipamento", "date": "2024-07-25" }'
+                kubectl exec $pod_name -n gitness -- curl -X GET http://localhost:8080/api/transactions
+      type: ci
+version: 1
