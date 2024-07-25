@@ -22,6 +22,10 @@ spec:
                 tags: latest
               name: docker
             type: plugin
+            when: |
+              build.event == "pull_request"
+              and
+              build.target == "main"
           - name: docker_build_push
             spec:
               inputs:
@@ -31,6 +35,12 @@ spec:
                 username: harnesspov
               name: docker
             type: plugin
+            when: |
+              build.event == "push"
+              or
+              build.event == "manual"
+              and
+              build.target == "main"
           - name: deploy-k8s
             type: run
             spec:
@@ -46,5 +56,11 @@ spec:
                 pod_name=$(kubectl get pods -n gitness -l app=finance-backend -o jsonpath='{.items[0].metadata.name}')
                 kubectl exec $pod_name -n gitness -- curl -X POST http://localhost:8080/api/transactions -H "Content-Type: application/json" -d '{ "amount": 100.00, "description": "Compra de equipamento", "date": "2024-07-25" }'
                 kubectl exec $pod_name -n gitness -- curl -X GET http://localhost:8080/api/transactions
+            when: |
+              build.event == "push"
+              or
+              build.event == "manual"
+              and
+              build.target == "main"
       type: ci
 version: 1
