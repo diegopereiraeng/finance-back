@@ -25,7 +25,7 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: {{ .varName }}
+            - name: NODE_OPTIONS
               value: {{ .varValue }}
 
 
