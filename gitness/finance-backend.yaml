@@ -1,1 +1,44 @@
-aaaa
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: finance-backend
+  labels:
+    name: prod
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finance-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: finance-backend
+  template:
+    metadata:
+      labels:
+        app: finance-backend
+    spec:
+      containers:
+        - name: finance-backend
+          image: {{ .Values.image }}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: {{ .varName }}
+              value: {{ .varValue }}
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: finance-backend
+spec:
+  selector:
+    app: finance-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080 # Updated to match the containerPort
+
