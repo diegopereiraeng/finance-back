@@ -21,14 +21,12 @@ spec:
     spec:
       containers:
         - name: finance-backend
-          image: {{ .Values.image }}
+          image: harnesspov/gitness-finance-backend:latest
           ports:
             - containerPort: 8080
           env:
             - name: NODE_OPTIONS
-              value: {{ .varValue }}
-
-
+              value: "--tls-min-v1.2 --tls-max-v1.2"
 ---
 apiVersion: v1
 kind: Service
