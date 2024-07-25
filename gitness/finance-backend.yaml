@@ -1,10 +1,3 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: gitness
-  labels:
-    name: prod
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
