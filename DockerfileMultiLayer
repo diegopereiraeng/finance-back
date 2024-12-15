@@ -23,3 +23,5 @@ COPY . /app
 
 # Comando padrão ao iniciar o contêiner
 CMD ["hello"]
+
+
